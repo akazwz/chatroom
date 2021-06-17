@@ -1,10 +1,9 @@
-package tcp
+package main
 
 import (
 	"bufio"
 	"fmt"
 	"log"
-	"math/rand"
 	"net"
 	"strconv"
 	"time"
@@ -74,7 +73,7 @@ func handleConn(conn net.Conn) {
 
 	// 1.新用户进来, 构建该用户的实例
 	user := &User{
-		ID:             rand.Int(),
+		ID:             genUserID(),
 		Addr:           conn.RemoteAddr().String(),
 		EnterAt:        time.Now(),
 		MessageChannel: make(chan string, 8),
@@ -102,7 +101,6 @@ func handleConn(conn net.Conn) {
 	}
 
 	// 6.用户离开
-
 	leavingChannel <- user
 	messageChannel <- "user:`" + strconv.Itoa(user.ID) + "` has left"
 }
@@ -113,5 +111,18 @@ func sendMessage(conn net.Conn, ch <-chan string) {
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+}
+
+func genUserID() int {
+	id := genAutoIncreaseInt()
+	return id()
+}
+
+func genAutoIncreaseInt() func() int {
+	id := 1
+	return func() int {
+		id = id + 1
+		return id
 	}
 }
