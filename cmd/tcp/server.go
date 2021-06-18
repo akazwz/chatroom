@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"strconv"
 	"time"
@@ -73,7 +74,7 @@ func handleConn(conn net.Conn) {
 
 	// 1.新用户进来, 构建该用户的实例
 	user := &User{
-		ID:             genUserID(),
+		ID:             rand.Int(),
 		Addr:           conn.RemoteAddr().String(),
 		EnterAt:        time.Now(),
 		MessageChannel: make(chan string, 8),
